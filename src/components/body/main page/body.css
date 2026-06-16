@@ -1,0 +1,39 @@
+.primary-body {
+  padding-block: 2rem 4rem;
+  width: min(92%, 1200px);
+  margin: 0 auto;
+  display: grid;
+  gap: 4rem;
+}
+
+.review-container {
+  gap: 2.5rem;
+}
+
+.categories-card {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.about-section {
+  place-items: center;
+  gap: 1.5rem;
+}
+
+@media only screen and (min-width: 35rem) {
+  .products-list {
+    grid-template-columns: repeat(2, minmax(10rem, 1fr));
+  }
+
+  #home-section .product-image {
+    min-height: 400px;
+  }
+}
+
+@media only screen and (min-width: 55rem) {
+  .products-list {
+    grid-template-columns: repeat(3, minmax(13rem, 1fr));
+  }
+}
