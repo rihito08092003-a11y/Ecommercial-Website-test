@@ -1,70 +1,128 @@
-# Getting Started with Create React App
+# Ecommercial Website
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Ecommercial Website is a skincare e-commerce demo built with React, Redux, React Router, and Supabase. It includes a connected product catalog, auth, persistent cart, protected checkout, and pending-order creation for demo deployments.
 
-## Available Scripts
+## Tech Stack
 
-In the project directory, you can run:
+- React 18 and Create React App
+- React Router DOM 6
+- Redux, Redux Thunk, Reselect, Redux Persist
+- Supabase Auth and Postgres
+- Vercel or Netlify static hosting
 
-### `npm start`
+## Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- Skincare product catalog loaded from Supabase
+- Product detail routes by id or slug
+- Category, sale, newest, trending, and search views
+- Supabase login, registration, logout, and password reset
+- Persistent cart with subtotal, tax, shipping fee, and total
+- Protected checkout for logged-in users
+- Pending order and order item creation in Supabase
+- Safe checkout demo flow with no raw card data collection
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Local Setup
 
-### `npm test`
+Install dependencies:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```bash
+npm install
+```
 
-### `npm run build`
+Copy the environment template:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+cp .env.example .env
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+On Windows PowerShell:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```powershell
+Copy-Item .env.example .env
+```
 
-### `npm run eject`
+## Environment Variables
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```text
+REACT_APP_SUPABASE_URL=
+REACT_APP_SUPABASE_ANON_KEY=
+REACT_APP_USE_MOCK_PRODUCTS=false
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Use real Supabase values only in local or host-provided environment variables. Do not commit `.env`.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+`REACT_APP_USE_MOCK_PRODUCTS=true` can be used for local product-catalog demo data. Checkout still requires Supabase and does not create fake production orders.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Supabase Setup
 
-## Learn More
+Create a Supabase project, then run the SQL files in this order from the Supabase SQL editor:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+1. `supabase/schema.sql`
+2. `supabase/seed-products.sql`
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+`schema.sql` creates:
 
-### Code Splitting
+- `categories`
+- `products`
+- `profiles`
+- `orders`
+- `order_items`
+- indexes and row-level security policies
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+`seed-products.sql` inserts the skincare category and product data.
 
-### Analyzing the Bundle Size
+## Scripts
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+Start the development server:
 
-### Making a Progressive Web App
+```bash
+npm start
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+Create a production build:
 
-### Advanced Configuration
+```bash
+npm run build
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+Run tests once in CI-style mode:
 
-### Deployment
+```bash
+npm test -- --watchAll=false
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## Vercel Deploy
 
-### `npm run build` fails to minify
+1. Import the repository into Vercel.
+2. Set the environment variables from `.env.example`.
+3. Use the default Create React App build command: `npm run build`.
+4. Use `build` as the output directory.
+5. Keep `vercel.json`; it rewrites SPA routes to `index.html`.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Netlify Deploy
+
+1. Import the repository into Netlify.
+2. Set the environment variables from `.env.example`.
+3. Build command: `npm run build`.
+4. Publish directory: `build`.
+5. Keep `netlify.toml`; it redirects SPA routes to `index.html`.
+
+## SPA Rewrite Notes
+
+The app uses `BrowserRouter`, so direct visits to routes such as `/product/premium-facial-serum` or `/checkout` must serve `index.html`. `vercel.json` and `netlify.toml` include this fallback behavior.
+
+## Known Limitations
+
+- Payment provider integration is not implemented; orders remain `payment_status = pending`.
+- Checkout inserts orders and order items separately, without a database transaction wrapper.
+- Profile rows are not auto-created by an auth trigger yet.
+- Static content pages are placeholders.
+- Product management/admin workflows are not implemented.
+
+## Future Improvements
+
+- Add payment provider checkout and webhook handling.
+- Add profile creation trigger and profile editing UI.
+- Add admin product/category/order management.
+- Move order creation into a Supabase RPC for transactional safety.
+- Replace placeholder static pages with real content.
