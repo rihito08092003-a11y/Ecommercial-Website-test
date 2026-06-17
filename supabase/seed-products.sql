@@ -1,12 +1,10 @@
--- ecomercial Supabase seed
--- Run this in Supabase Dashboard > SQL Editor.
+-- Ecommercial Website Supabase seed
+-- Run supabase/schema.sql first, then run this in Supabase Dashboard > SQL Editor.
 -- 30 products:
 -- - OnSale products have exact discount math.
 -- - Newest products use is_new = true.
 -- - Trending products sort by sold_count.
 -- - Some products have no sale and no new tag.
-
-alter table public.products add column if not exists sold_count integer not null default 0;
 
 insert into public.categories (slug, name, description)
 values

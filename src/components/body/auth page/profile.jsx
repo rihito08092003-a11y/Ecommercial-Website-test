@@ -9,12 +9,11 @@ import authAction from "../../../store/actions/auth";
 const ProfilePage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const auth = useSelector(authSelector.selectAuth);
-  const account = auth.account || {};
-  const displayName = account.name || "Your account";
+  const user = useSelector(authSelector.selectUser);
+  const displayName = user?.name || user?.email || "Your account";
 
   const onLogout = () => {
-    dispatch(authAction.logout());
+    dispatch(authAction.logoutUser());
     navigate("/auth/login", { replace: true });
   };
 
@@ -26,15 +25,15 @@ const ProfilePage = () => {
           <Title title={`Welcome back`} />
           <div className="profile-summary">
             <div className="profile-avatar" aria-hidden="true">
-              {(displayName || account.email || "E").charAt(0).toUpperCase()}
+              {(displayName || "E").charAt(0).toUpperCase()}
             </div>
             <div className="profile-details">
               <h3 className="font-clrs">{displayName}</h3>
-              {account.email ? (
-                <p className="profile-email font-clrs">{account.email}</p>
+              {user?.email ? (
+                <p className="profile-email font-clrs">{user.email}</p>
               ) : null}
               <span className="profile-status">
-                {account.emailConfirmed ? "Email confirmed" : "Signed in"}
+                {user?.emailConfirmed ? "Email confirmed" : "Signed in"}
               </span>
             </div>
           </div>

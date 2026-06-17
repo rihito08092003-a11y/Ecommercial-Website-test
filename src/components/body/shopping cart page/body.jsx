@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import useScrollToTop from "../../../hooks/useScrollToTop";
@@ -9,30 +9,16 @@ import SecondaryText from "../../secondary-text";
 import Title from "../../section-title";
 import "./body.css";
 import CartCard from "./cart-card";
-import { getLineTotal } from "../../../utils/product";
+import { getCartTotals } from "../../../utils/product";
 const ShoppingCart = () => {
   useScrollToTop();
   const cartList = useSelector(cartSelector.cartProducts);
-  let [amount, setAmount] = useState(0);
   const dispatch = useDispatch();
-  const countPrice = () => {
-    setAmount(
-      cartList
-        .map(getLineTotal)
-        .reduce((prev, curr) => prev + curr, 0),
-    );
-  };
+  const totals = useMemo(() => getCartTotals(cartList), [cartList]);
 
   const HandleClear = () => {
     dispatch(cartAction.clearProduct());
   };
-
-  useEffect(() => {
-    const total = cartList
-      .map(getLineTotal)
-      .reduce((prev, curr) => prev + curr, 0);
-    setAmount(total);
-  }, [cartList]);
 
   return (
     <>
@@ -52,7 +38,7 @@ const ShoppingCart = () => {
           <div className="grid cart-items">
             {cartList.length ? (
               cartList.map((item) => (
-                <CartCard key={item.id} product={item} count={countPrice} />
+                <CartCard key={item.id} product={item} />
               ))
             ) : (
               <div className="empty-cart grid">
@@ -68,24 +54,22 @@ const ShoppingCart = () => {
             <h3 className="fs-400 font-clrs">Cart Total</h3>
             <div>
               <p className="fs-300 font-clrs">Subtotal:</p>
-              <p className="font-clrs">{numberWithCommas(amount)}₫</p>
+              <p className="font-clrs">{numberWithCommas(totals.subtotal)}₫</p>
             </div>
             <div>
               <p className="fs-300 font-clrs">Tax:</p>
               <p className="font-clrs">
-                {numberWithCommas((amount * 10) / 100)}₫
+                {numberWithCommas(totals.tax)}₫
               </p>
             </div>
             <div>
               <p className="fs-300 font-clrs">Shipping:</p>
-              <p className=" font-clrs">{numberWithCommas(amount ? 25000 : 0)}₫</p>
+              <p className=" font-clrs">{numberWithCommas(totals.shippingFee)}₫</p>
             </div>
             <div>
               <h4 className="fs-300 font-clrs">Total:</h4>
               <p className="font-clrs">
-                {numberWithCommas(
-                  amount ? (amount * 10) / 100 + amount + 25000 : 0,
-                )}
+                {numberWithCommas(totals.total)}
                 ₫
               </p>
             </div>

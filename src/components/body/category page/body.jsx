@@ -12,12 +12,25 @@ const routeConfig = {
   featured: { title: "Featured", type: "newest" },
   trending: { title: "Trending", type: "trending" },
   newest: { title: "Newest", type: "newest" },
-  masks: { title: "Masks", type: "category" },
-  eyecare: { title: "Eye Care", type: "category" },
-  moisturizers: { title: "Moisturizers", type: "category" },
-  treatments: { title: "Treatments", type: "category" },
-  nightcare: { title: "Night Care", type: "category" },
-  suncare: { title: "Sun Care", type: "category" },
+  serums: { title: "Serums", type: "category", slug: "serums" },
+  moisturizers: { title: "Moisturizers", type: "category", slug: "moisturizers" },
+  cleansers: { title: "Cleansers", type: "category", slug: "cleansers" },
+  "eye-care": { title: "Eye Care", type: "category", slug: "eye-care" },
+  masks: { title: "Masks", type: "category", slug: "masks" },
+  suncare: { title: "Suncare", type: "category", slug: "suncare" },
+  toners: { title: "Toners", type: "category", slug: "toners" },
+  treatments: { title: "Treatments", type: "category", slug: "treatments" },
+};
+
+const categoryLabels = {
+  serums: "Serums",
+  moisturizers: "Moisturizers",
+  cleansers: "Cleansers",
+  "eye-care": "Eye Care",
+  masks: "Masks",
+  suncare: "Suncare",
+  toners: "Toners",
+  treatments: "Treatments",
 };
 
 const CategoryBody = () => {
@@ -35,12 +48,11 @@ const CategoryBody = () => {
   }, [routeKey]);
 
   const categories = useMemo(() => {
-    const list = products.map((item) => item.category).filter(Boolean);
+    const list = products.map((item) => item.categorySlug).filter(Boolean);
     return ["all", ...Array.from(new Set(list))];
   }, [products]);
 
   const filteredProducts = useMemo(() => {
-    const normalizedPage = pageTitle.toLowerCase().replace(/\s/g, "");
     const baseProducts = products.filter((item) => {
       if (!route) {
         return true;
@@ -59,14 +71,14 @@ const CategoryBody = () => {
       }
 
       return (
-        item.category?.toLowerCase().replace(/\s/g, "") === normalizedPage
+        item.categorySlug === route.slug
       );
     });
 
     const selectedProducts =
       selectedCategory === "all"
         ? baseProducts
-        : baseProducts.filter((item) => item.category === selectedCategory);
+        : baseProducts.filter((item) => item.categorySlug === selectedCategory);
 
     return [...selectedProducts].sort((a, b) => {
       const priceA = a.price?.actual ?? a.price?.current ?? 0;
@@ -100,13 +112,14 @@ const CategoryBody = () => {
           return 0;
       }
     });
-  }, [pageTitle, products, route, selectedCategory, sortBy]);
+  }, [products, route, selectedCategory, sortBy]);
 
   return (
     <>
       <main className="primary-body center grid">
         <Category
           categories={categories}
+          categoryLabels={categoryLabels}
           pageTitle={pageTitle}
           productCount={filteredProducts.length}
           selectedCategory={selectedCategory}

@@ -7,12 +7,14 @@ import "./footer.css";
 const categoryLinks = [
   ["On Sale", "/onsale"],
   ["Featured", "/newest"],
-  ["Masks", "/Masks"],
-  ["Eye Care", "/EyeCare"],
-  ["Moisturizers", "/Moisturizers"],
-  ["Treatments", "/Treatments"],
-  ["Night Care", "/NightCare"],
-  ["Sun Care", "/SunCare"],
+  ["Serums", "/serums"],
+  ["Moisturizers", "/moisturizers"],
+  ["Cleansers", "/cleansers"],
+  ["Eye Care", "/eye-care"],
+  ["Masks", "/masks"],
+  ["Suncare", "/suncare"],
+  ["Toners", "/toners"],
+  ["Treatments", "/treatments"],
 ];
 
 const legalLinks = [
@@ -43,7 +45,7 @@ const Footer = () => {
   return (
     <footer className="primary-footer grid center">
       <div className="footer-brand">
-        <h3 className="font-clrs">ecomercial</h3>
+        <h3 className="font-clrs">Ecommercial Website</h3>
         <p className="fs-300 font-clrs">
           Premium skincare essentials curated for clean, simple routines.
         </p>
@@ -90,7 +92,7 @@ const Footer = () => {
         </ul>
       </div>
 
-      <p className="footer-bottom font-clrs">© 2026 ecomercial. All rights reserved.</p>
+      <p className="footer-bottom font-clrs">© 2026 Ecommercial Website. All rights reserved.</p>
     </footer>
   );
 };

@@ -7,9 +7,9 @@ const About = () => {
     <main className="primary-body center grid">
       <section className="static-page info-page grid center">
         <SecondaryText text="About" center />
-        <Title title="About ecomercial" center />
+        <Title title="About Ecommercial Website" center />
         <p className="font-clrs">
-          ecomercial curates simple skincare essentials with clean presentation,
+          Ecommercial Website curates simple skincare essentials with clean presentation,
           reliable shopping flows, and a product catalog ready to connect to
           Supabase.
         </p>

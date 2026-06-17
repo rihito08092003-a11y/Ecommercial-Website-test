@@ -3,6 +3,7 @@ import Title from "../../section-title";
 
 const Category = ({
   categories,
+  categoryLabels,
   pageTitle,
   productCount,
   selectedCategory,
@@ -28,7 +29,7 @@ const Category = ({
           >
             {categories.map((item) => (
               <option key={item} value={item}>
-                {item === "all" ? "All categories" : item}
+                {item === "all" ? "All categories" : categoryLabels[item] || item}
               </option>
             ))}
           </select>

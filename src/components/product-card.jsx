@@ -1,4 +1,3 @@
-import clsx from "clsx";
 import { Link, useNavigate } from "react-router-dom";
 import numberWithCommas from "./display";
 import ProductImage from "./product-image";
@@ -7,8 +6,9 @@ import { getDiscount, normalizeProduct } from "../utils/product";
 const ProductCard = (props) => {
   const navigate = useNavigate();
   const product = normalizeProduct(props.product);
-  const { price, name, category, newest, id, image } = product;
+  const { price, name, category, newest, id, slug, image } = product;
   const discount = getDiscount(product);
+  const hasOldPrice = Number(price.old) > Number(price.actual);
 
   const goToCollection = (event, path) => {
     event.preventDefault();
@@ -16,21 +16,8 @@ const ProductCard = (props) => {
     navigate(path);
   };
 
-  const colorTag = (tag) => {
-    switch (tag) {
-      case "Đồ chơi trẻ em":
-        return "yellow-tag";
-      case "Mỹ phẩm":
-        return "cya-tag";
-      case "Nước hoa":
-        return "blue-tag";
-      default:
-        return "yellow-tag";
-    }
-  };
-
   return (
-    <Link className="re product-card grid" to={`/product/${id || ""}`}>
+    <Link className="re product-card grid" to={`/product/${slug || id || ""}`}>
       <div className="product-card-media">
         <div className="product-badges">
           {discount ? (
@@ -63,13 +50,11 @@ const ProductCard = (props) => {
         <ProductImage link={image} title={name} />
       </div>
       <div className="product-card-content">
-        <span className={clsx("tag yellow-tag", colorTag(category))}>
-          {category === "Đồ chơi trẻ em" ? "Đồ chơi" : category || "Shop"}
-        </span>
+        <span className="tag yellow-tag">{category || "Skincare"}</span>
         <h3 className="fs-400 font-clrs">{name}</h3>
         <div className="flex product-card-info-pricetag fs-300 font-clrs">
           <p className="fs-300 font-clrs">{numberWithCommas(price.actual)}₫</p>
-          {price.old ? (
+          {hasOldPrice ? (
             <p className="old-price fs-200 font-clrs">
               {numberWithCommas(price.old)}₫
             </p>

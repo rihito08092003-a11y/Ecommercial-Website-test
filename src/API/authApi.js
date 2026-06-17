@@ -8,6 +8,33 @@ const mapUser = (user) => ({
 });
 
 const authService = {
+  getSession: async () => {
+    if (!isSupabaseConfigured) {
+      return { session: null, user: null };
+    }
+
+    const { data, error } = await supabase.auth.getSession();
+    if (error) throw error;
+
+    return {
+      session: data.session,
+      user: mapUser(data.session?.user),
+    };
+  },
+  onAuthStateChange: (callback) => {
+    if (!isSupabaseConfigured) {
+      return { unsubscribe: () => {} };
+    }
+
+    const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+      callback({
+        session,
+        user: mapUser(session?.user),
+      });
+    });
+
+    return data.subscription;
+  },
   logout: async () => {
     if (!isSupabaseConfigured) {
       return {};
@@ -30,7 +57,7 @@ const authService = {
     if (error) throw error;
 
     return {
-      jwt: authData.session?.access_token,
+      session: authData.session,
       user: mapUser(authData.user),
     };
   },
@@ -47,9 +74,19 @@ const authService = {
     if (error) throw error;
 
     return {
-      jwt: authData.session?.access_token,
+      session: authData.session,
       user: mapUser(authData.user),
     };
+  },
+  resetPassword: async (email) => {
+    if (!isSupabaseConfigured) {
+      throw new Error("Supabase is not configured");
+    }
+
+    const { data, error } = await supabase.auth.resetPasswordForEmail(email);
+    if (error) throw error;
+
+    return data;
   },
 };
 

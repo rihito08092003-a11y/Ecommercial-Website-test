@@ -9,7 +9,9 @@ import authSelector from "../../../store/selectors/authSelector";
 const Form = () => {
   const [user, setUser] = useState({ email: "", password: "" });
   const dispatch = useDispatch();
-  const auth = useSelector(authSelector.selectAuth);
+  const isLoggedIn = useSelector(authSelector.selectIsLoggedIn);
+  const isLoading = useSelector(authSelector.selectIsLoading);
+  const error = useSelector(authSelector.selectAuthError);
 
   const onChange = (e) => {
     setUser({
@@ -20,12 +22,12 @@ const Form = () => {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    dispatch(actionType.userLoginFetch(user));
+    dispatch(actionType.loginUser(user.email, user.password));
   };
 
   return (
     <>
-      {auth.isLogined ? <Navigate to="/auth/profile" replace /> : null}
+      {isLoggedIn ? <Navigate to="/auth/profile" replace /> : null}
       <section className="grid auth-card-wrap">
         <SecondaryText text="Login" />
         <Title title="Login to Your Account" />
@@ -58,13 +60,13 @@ const Form = () => {
               onChange={onChange}
             />
           </div>
-          {auth.error ? <p className="auth-error">{auth.error}</p> : null}
+          {error ? <p className="auth-error">{error}</p> : null}
           <button
             className="btn primary-bg fs-300 width-btn"
             type="submit"
-            disabled={auth.isLoading}
+            disabled={isLoading}
           >
-            <strong>{auth.isLoading ? "Logging in..." : "Login"}</strong>
+            <strong>{isLoading ? "Logging in..." : "Login"}</strong>
           </button>
           <div className="auth-links">
             <Link className="font-clrs fs-300 auth-link-strong" to="/auth/register">

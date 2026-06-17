@@ -1,4 +1,6 @@
 const StateTwo = (props) => {
+  const { shipping, onShippingChange } = props;
+
   return (
     <section className="grid border-btn" id="detail-page">
       <h3 className="fs-400 font-clrs">Shipping Details</h3>
@@ -20,6 +22,8 @@ const StateTwo = (props) => {
             id="name"
             name="name"
             placeholder="name"
+            value={shipping.name}
+            onChange={onShippingChange}
           />
         </div>
         <div className="form-control grid">
@@ -33,6 +37,8 @@ const StateTwo = (props) => {
             id="street"
             name="street"
             placeholder="street name"
+            value={shipping.street}
+            onChange={onShippingChange}
           />
         </div>
         <div className="form-control grid">
@@ -46,6 +52,8 @@ const StateTwo = (props) => {
             id="house-number"
             name="house-number"
             placeholder="123"
+            value={shipping.houseNumber}
+            onChange={onShippingChange}
           />
         </div>
         <div className="form-control grid">
@@ -59,6 +67,8 @@ const StateTwo = (props) => {
             id="country"
             name="country"
             placeholder="vietnam"
+            value={shipping.country}
+            onChange={onShippingChange}
           />
         </div>
         <div className="form-control grid">
@@ -72,6 +82,8 @@ const StateTwo = (props) => {
             id="zip-code"
             name="zip-code"
             placeholder="1000"
+            value={shipping.zipCode}
+            onChange={onShippingChange}
           />
         </div>
         <button

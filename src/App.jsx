@@ -17,6 +17,7 @@ import SearchPage from "./components/body/search page/body";
 import clsx from "clsx";
 import ProfilePage from "./components/body/auth page/profile";
 import authSelector from "./store/selectors/authSelector";
+import authAction from "./store/actions/auth";
 import Blog from "./components/body/blog page/body";
 import About from "./components/body/about page/body";
 import Contact from "./components/body/contact page/body";
@@ -25,13 +26,23 @@ import ForgotPassword from "./components/body/auth page/forgot-password";
 import StaticPage from "./components/body/static page/body";
 
 const ProtectedRoute = ({ children }) => {
+  const isInitialized = useSelector(authSelector.selectIsInitialized);
   const isLoggedIn = useSelector(authSelector.selectIsLoggedIn);
+
+  if (!isInitialized) {
+    return null;
+  }
 
   return isLoggedIn ? children : <Navigate to="/auth/login" replace />;
 };
 
 const GuestRoute = ({ children }) => {
+  const isInitialized = useSelector(authSelector.selectIsInitialized);
   const isLoggedIn = useSelector(authSelector.selectIsLoggedIn);
+
+  if (!isInitialized) {
+    return null;
+  }
 
   return isLoggedIn ? <Navigate to="/auth/profile" replace /> : children;
 };
@@ -40,7 +51,10 @@ function App() {
   const theme = useSelector(themesSelector.selectThemes);
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(productAction.fetchProductAsync());
+    dispatch(authAction.initializeAuth());
+  }, [dispatch]);
+  useEffect(() => {
+    dispatch(productAction.fetchProducts()).catch(() => {});
   }, [dispatch]);
   return (
     <div

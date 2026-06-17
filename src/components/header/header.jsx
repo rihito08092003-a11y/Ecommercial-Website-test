@@ -13,12 +13,14 @@ const categories = [
   ["On Sale", "/onsale"],
   ["Trending", "/trending"],
   ["Newest", "/newest"],
-  ["Masks", "/Masks"],
-  ["Eye Care", "/EyeCare"],
-  ["Moisturizers", "/Moisturizers"],
-  ["Treatments", "/Treatments"],
-  ["Night Care", "/NightCare"],
-  ["Sun Care", "/SunCare"],
+  ["Serums", "/serums"],
+  ["Moisturizers", "/moisturizers"],
+  ["Cleansers", "/cleansers"],
+  ["Eye Care", "/eye-care"],
+  ["Masks", "/masks"],
+  ["Suncare", "/suncare"],
+  ["Toners", "/toners"],
+  ["Treatments", "/treatments"],
 ];
 
 const Header = () => {
@@ -36,7 +38,7 @@ const Header = () => {
   };
 
   const handleLogout = () => {
-    dispatch(authAction.logout());
+    dispatch(authAction.logoutUser());
     handleNavClick();
   };
 
@@ -74,7 +76,7 @@ const Header = () => {
           </button>
 
           <Link id="logo" className="font-clrs" to="/" onClick={handleNavClick}>
-            ecomercial
+            Ecommercial Website
           </Link>
 
           <form className="nav-search" onSubmit={onSubmit}>

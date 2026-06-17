@@ -16,7 +16,7 @@ const content = {
 
 const StaticPage = () => {
   const { pathname } = useLocation();
-  const [eyebrow, title] = content[pathname] || ["ecomercial", "Information"];
+  const [eyebrow, title] = content[pathname] || ["Ecommercial Website", "Information"];
 
   return (
     <main className="primary-body center grid">
@@ -25,8 +25,7 @@ const StaticPage = () => {
         <Title title={title} center />
         <p className="font-clrs">
           This page is wired into the route system and ready for real content.
-          Add policy or company copy here when the backend/content source is
-          available.
+          Publish policy or company copy here when the content source is ready.
         </p>
         <Link className="btn primary-bg fs-300 center" to="/product">
           Browse products

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import useScrollToTop from "../../../hooks/useScrollToTop";
@@ -10,15 +10,30 @@ import Sad from "../../../asset/sad.png";
 
 const SearchPage = () => {
   const products = useSelector(productSelector.selectProducts);
-  const [param, setParam] = useState(null);
   useScrollToTop();
   const location = useLocation();
-  useEffect(() => {
-    let queryParams = new URLSearchParams(location.search);
-    let singleValue = queryParams.get("search");
-    if (!singleValue) return;
-    setParam(singleValue);
-  }, [location]);
+  const param = useMemo(() => {
+    const queryParams = new URLSearchParams(location.search);
+    return (queryParams.get("search") || "").trim();
+  }, [location.search]);
+  const searchText = param.toLowerCase();
+  const filteredProducts = useMemo(() => {
+    if (!searchText) {
+      return products;
+    }
+
+    return products.filter((item) => {
+      const name = item.name?.toLowerCase() || "";
+      const description = item.description?.toLowerCase() || "";
+      const category = item.category?.toLowerCase() || "";
+
+      return (
+        name.includes(searchText) ||
+        description.includes(searchText) ||
+        category.includes(searchText)
+      );
+    });
+  }, [products, searchText]);
 
   return (
     <main className="primary-body center grid">
@@ -26,17 +41,11 @@ const SearchPage = () => {
       <Title title={`${param ? '"' + param + '"' : "All"} Products`} />
 
       {param ? (
-        products.filter((item) =>
-          item.name.toLowerCase().includes(param.toLowerCase())
-        ).length > 0 ? (
+        filteredProducts.length > 0 ? (
           <section className="grid products-list">
-            {products
-              .filter((item) =>
-                item.name.toLowerCase().includes(param.toLowerCase())
-              )
-              .map((item) => (
-                <ProductCard product={item} key={item.id} />
-              ))}
+            {filteredProducts.map((item) => (
+              <ProductCard product={item} key={item.id} />
+            ))}
           </section>
         ) : (
           <section className="grid">
@@ -55,7 +64,7 @@ const SearchPage = () => {
         )
       ) : (
         <section className="grid products-list">
-          {products.map((item) => (
+          {filteredProducts.map((item) => (
             <ProductCard product={item} key={item.id} />
           ))}
         </section>

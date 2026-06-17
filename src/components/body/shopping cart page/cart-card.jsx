@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useDispatch } from "react-redux";
 import cartAction from "../../../store/actions/cart";
 
@@ -10,23 +9,18 @@ const CartCard = (props) => {
   const product = normalizeProduct(props.product);
   const { id, image, name, amount, price } = product;
   const dispatch = useDispatch();
-  const [cartAmount, setAmount] = useState(amount);
-  const calculatePrice = props.count;
+  const cartAmount = Number(amount) || 1;
 
   const HandleAmount = (e) => {
     if (e === "-") {
-      setAmount(cartAmount - 1);
-
-      if (amount === 1) {
+      if (cartAmount === 1) {
         dispatch(cartAction.removeProduct({ id: id }));
       } else {
         dispatch(cartAction.editProduct({ id: id, amount: cartAmount - 1 }));
       }
     } else if (e === "+") {
-      setAmount(cartAmount + 1);
       dispatch(cartAction.editProduct({ id: id, amount: cartAmount + 1 }));
     }
-    calculatePrice();
   };
 
   const clearProduct = () => {

@@ -10,7 +10,7 @@ const Contact = () => {
         <Title title="Contact Us" center />
         <p className="font-clrs">
           Need help with an order, product setup, or account access? This page
-          is ready for a contact form once the backend endpoint is added.
+          is ready for a contact form once support messaging is added.
         </p>
         <Link className="btn primary-bg fs-300 center" to="/product">
           Continue shopping

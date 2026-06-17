@@ -2,41 +2,77 @@ import authService from "../../API/authApi";
 
 export const authenActionType = {
   request: "auth/request",
-  register: "auth/register",
-  login: "auth/login",
+  initialized: "auth/initialized",
+  sessionChanged: "auth/sessionChanged",
   logout: "auth/logout",
   failure: "auth/failure",
+  resetPasswordSuccess: "auth/resetPasswordSuccess",
 };
 
-const userLoginFetch = (user) => async (dispatch) => {
+let authSubscription = null;
+
+const getErrorMessage = (error, fallback) =>
+  error.response?.data?.message || error.message || fallback;
+
+const request = () => ({
+  type: authenActionType.request,
+});
+
+const initialized = (payload) => ({
+  type: authenActionType.initialized,
+  payload,
+});
+
+const sessionChanged = (payload) => ({
+  type: authenActionType.sessionChanged,
+  payload,
+});
+
+const failure = (payload) => ({
+  type: authenActionType.failure,
+  payload,
+});
+
+const initializeAuth = () => async (dispatch) => {
   try {
     dispatch(request());
-    const data = await authService.login(user);
-    const token = data.jwt || data.token;
+    const data = await authService.getSession();
+    dispatch(initialized(data));
 
-    if (token) {
-      localStorage.setItem("token", token);
+    if (!authSubscription) {
+      authSubscription = authService.onAuthStateChange((sessionData) => {
+        dispatch(sessionChanged(sessionData));
+      });
     }
 
-    dispatch(login(data));
     return data;
   } catch (error) {
-    const message =
-      error.response?.data?.message || error.message || "Login failed";
+    const message = getErrorMessage(error, "Auth initialization failed");
     dispatch(failure(message));
     throw error;
   }
 };
 
-const userRegisterFetch = (user) => async (dispatch) => {
+const loginUser = (email, password) => async (dispatch) => {
   try {
     dispatch(request());
-    const data = await authService.register(user);
-    const token = data.jwt || data.token;
+    const data = await authService.login({ email, password });
+    dispatch(sessionChanged(data));
+    return data;
+  } catch (error) {
+    const message = getErrorMessage(error, "Login failed");
+    dispatch(failure(message));
+    throw error;
+  }
+};
 
-    if (token) {
-      localStorage.setItem("token", token);
-      dispatch(register(data));
+const registerUser = (email, password) => async (dispatch) => {
+  try {
+    dispatch(request());
+    const data = await authService.register({ email, password });
+
+    if (data.session) {
+      dispatch(sessionChanged(data));
     } else {
       dispatch(
         failure(
@@ -47,45 +83,46 @@ const userRegisterFetch = (user) => async (dispatch) => {
 
     return data;
   } catch (error) {
-    const message =
-      error.response?.data?.message || error.message || "Register failed";
+    const message = getErrorMessage(error, "Register failed");
     dispatch(failure(message));
     throw error;
   }
 };
 
-const request = () => ({
-  type: authenActionType.request,
-});
-
-const register = (payload) => ({
-  type: authenActionType.register,
-  payload,
-});
-
-const login = (payload) => ({
-  type: authenActionType.login,
-  payload,
-});
-
-const logout = () => async (dispatch) => {
+const logoutUser = () => async (dispatch) => {
   try {
     await authService.logout();
   } finally {
-    localStorage.removeItem("token");
     dispatch({ type: authenActionType.logout });
   }
 };
 
-const failure = (payload) => ({
-  type: authenActionType.failure,
-  payload,
-});
+const resetPassword = (email) => async (dispatch) => {
+  try {
+    dispatch(request());
+    const data = await authService.resetPassword(email);
+    dispatch({
+      type: authenActionType.resetPasswordSuccess,
+      payload: "Password reset email sent. Please check your inbox.",
+    });
+    return data;
+  } catch (error) {
+    const message = getErrorMessage(error, "Password reset failed");
+    dispatch(failure(message));
+    throw error;
+  }
+};
+
+const userLoginFetch = (user) => loginUser(user.email, user.password);
+const userRegisterFetch = (user) => registerUser(user.email, user.password);
 
 const actionType = {
-  register,
-  login,
-  logout,
+  initializeAuth,
+  loginUser,
+  registerUser,
+  logoutUser,
+  resetPassword,
+  logout: logoutUser,
   failure,
   userLoginFetch,
   userRegisterFetch,

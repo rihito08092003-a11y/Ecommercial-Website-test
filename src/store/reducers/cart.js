@@ -1,12 +1,20 @@
 import { cartActionType } from "../actions/cart";
 import { normalizeProduct } from "../../utils/product";
+import { persistReducer } from "redux-persist";
+import storage from "redux-persist/lib/storage";
+
+const toPositiveInteger = (value) => {
+  const amount = Math.floor(Number(value));
+  return Number.isFinite(amount) && amount > 0 ? amount : 1;
+};
 
 const cartReducer = (state = { cart: [] }, action) => {
   switch (action.type) {
     case cartActionType.addProduct: {
-      const { id, amount } = action.payload;
+      const { amount } = action.payload;
       const product = normalizeProduct(action.payload);
-      const currentAmount = Number(amount) || 1;
+      const { id } = product;
+      const currentAmount = toPositiveInteger(amount);
       const item = state.cart.find((item) => item.id === id);
 
       if (item) {
@@ -30,10 +38,11 @@ const cartReducer = (state = { cart: [] }, action) => {
     }
     case cartActionType.editProduct: {
       const { id, amount } = action.payload;
+      const nextAmount = toPositiveInteger(amount);
       return {
         ...state,
         cart: state.cart.map((item) =>
-          item.id === id ? { ...item, amount: Math.max(1, amount) } : item,
+          item.id === id ? { ...item, amount: nextAmount } : item,
         ),
       };
     }
@@ -59,4 +68,11 @@ const cartReducer = (state = { cart: [] }, action) => {
   }
 };
 
-export default cartReducer;
+const persistConfig = {
+  keyPrefix: "c2Shop",
+  key: "Cart",
+  storage,
+  whitelist: ["cart"],
+};
+
+export default persistReducer(persistConfig, cartReducer);
